@@ -9,7 +9,10 @@ public class Driver {
 
     public static void main(String[] args){
 
-        Javalin app = Javalin.create().start(8080);
+        Javalin app = Javalin.create( config -> {
+            config.enableCorsForAllOrigins();
+        }).start(8080);
+
         UserService userService = new UserService();
         UserController userController = new UserController(userService);
 
@@ -18,6 +21,8 @@ public class Driver {
         app.post("/user", userController.createNewUser);
         app.put("/user",userController.updateUser);
         app.delete("/user", userController.deleteUser);
+        app.delete("/user/{id}", userController.deleteUserById);
+        app.post("/login", userController.loginUser);
 
         FlashCardService flashCardService = new FlashCardService();
         FlashCardController flashCardController = new FlashCardController(flashCardService);

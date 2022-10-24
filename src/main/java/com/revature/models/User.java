@@ -7,25 +7,54 @@ public class User {
     private String lastname;
     private String email;
     private String password;
+    private String zodiac;
+    private String mood;
 
     public User() {
     }
     //all args constructor
-    public User(int id, String firstname, String lastname, String email, String password) {
+    public User(int id, String firstname, String lastname, String email, String password, String zodiac, String mood) {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.password = password;
+        this.zodiac = zodiac;
+        this.mood = mood;
     }
-    //some-args construstor
+    //some-args constructor
     // here we are not including the id because we have
     //set our id to be "Serial" ak to auto generate in our db
-    public User(String firstname, String lastname, String email, String password) {
+    public User(String firstname, String lastname, String email, String password, String zodiac) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.password = password;
+        this.zodiac = zodiac;
+
+    }
+
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+
+
+
+    public String getZodiac() {
+        return zodiac;
+    }
+
+    public void setZodiac(String zodiac) {
+        this.zodiac = zodiac;
+    }
+
+    public String getMood() {
+        return mood;
+    }
+
+    public void setMood(String mood) {
+        this.mood = mood;
     }
 
     public int getId() {
@@ -76,6 +105,12 @@ public class User {
                 ", lastname='" + lastname + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", zodiac='" + zodiac + '\'' +
+                ", mood='" + mood + '\'' +
                 '}';
     }
+
+
+
+
 }

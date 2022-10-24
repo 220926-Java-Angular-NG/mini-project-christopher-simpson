@@ -96,4 +96,8 @@ public class UserService {
 
     }
 
+
+    public User loginUser(User user){
+        return userRepo.loginUser(user);
+    }
 }

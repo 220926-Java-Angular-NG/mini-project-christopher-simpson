@@ -49,7 +49,7 @@ public class UserRepo implements  CRUDDaoInterface<User>{
             // however we are still creating a new row...
 
             try {
-                String sql = "INSERT INTO users (id, first_name, last_name, email, pass_word) VALUES (default,?,?,?,?)";
+                String sql = "INSERT INTO users (id, first_name, last_name, email, pass_word, zodiac_sign, mood) VALUES (default,?,?,?,?,?,?)";
 
                 //feeds it to the database management system
                 PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -58,6 +58,8 @@ public class UserRepo implements  CRUDDaoInterface<User>{
                 pstmt.setString(2, user.getLastname());
                 pstmt.setString(3, user.getEmail());
                 pstmt.setString(4, user.getPassword());
+                pstmt.setString(5, user.getZodiac());
+                pstmt.setString(6, user.getMood());
 
                 // this executes the sql statement above
                 pstmt.executeUpdate();
@@ -68,7 +70,6 @@ public class UserRepo implements  CRUDDaoInterface<User>{
                 // the cursor is right in front of the first (or only) element in our results set.
                 // calling rs.next() iterates us into the first row.
                 rs.next();
-
                 return rs.getInt("id");
 
             }catch(SQLException sqlException){
@@ -97,6 +98,8 @@ public class UserRepo implements  CRUDDaoInterface<User>{
                     user.setLastname(rs.getString("last_name"));
                     user.setEmail(rs.getString("email"));
                     user.setPassword(rs.getString("pass_word"));
+                    user.setZodiac(rs.getString("zodiac_sign"));
+                    user.setMood(rs.getString("mood"));
 
                     users.add(user);
 
@@ -131,6 +134,8 @@ public class UserRepo implements  CRUDDaoInterface<User>{
                     user.setLastname(rs.getString("last_name"));
                     user.setEmail(rs.getString("email"));
                     user.setPassword(rs.getString("pass_word"));
+                    user.setZodiac(rs.getString("zodiac"));
+                    user.setMood(rs.getString("mood"));
                 }
 
                 return user;
@@ -147,9 +152,9 @@ public class UserRepo implements  CRUDDaoInterface<User>{
 
             try {
                 // we are updating a row at a specific id
-                String sql = "UPDATE users SET email = ? WHERE id = ?";
+                String sql = "UPDATE users SET mood = ? WHERE id = ?";
                 PreparedStatement pstmt = conn.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
-                pstmt.setString(1,user.getEmail());
+                pstmt.setString(1,user.getMood());
                 pstmt.setInt(2,user.getId());
 
                 pstmt.executeUpdate();
@@ -157,7 +162,7 @@ public class UserRepo implements  CRUDDaoInterface<User>{
                 ResultSet rs = pstmt.getGeneratedKeys();
 
                 while(rs.next()){
-                    user.setEmail(rs.getString("email"));
+                    user.setEmail(rs.getString("mood"));
                 }
                 return user;
 
@@ -182,7 +187,8 @@ public class UserRepo implements  CRUDDaoInterface<User>{
                 //pstmt.execute() returns a boolean
                 //it returns false if the executed statement returns void
 
-                return pstmt.execute();
+                pstmt.execute();
+                return true;
             }catch(SQLException sqlException){
 
                 System.out.println(sqlException.getMessage());
@@ -190,8 +196,53 @@ public class UserRepo implements  CRUDDaoInterface<User>{
             return false;
         }
         public boolean deleteByUserId(int id){
-            return delete(getById(id));
+            try {
+
+                String sql = "DELETE FROM users WHERE id = ?";
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+
+                pstmt.setInt(1, id);
+
+                //pstmt.execute() returns a boolean
+                // it returns false if the executed statement returns void
+
+                pstmt.execute();
+                return true;
+            }catch(SQLException sqlException){
+                System.out.println(sqlException.getMessage());
+            }
+            return false;
         }
+
+    public User loginUser(User user){
+
+        try {
+
+            String sql = "SELECT * FROM users WHERE email = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, user.getEmail());
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if(rs.next() && rs.getString("pass_word").equals(user.getPassword())){
+
+                return new User(rs.getInt("id"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("email"),
+                        rs.getString("pass_word"),
+                        rs.getString("zodiac_sign"),
+                        rs.getString("mood"));
+            }
+
+
+        }catch(Exception e){
+            System.out.println("This is the userDAO: " + e.getMessage());
+        }
+
+        return null;
+    }
+
 
 
 }

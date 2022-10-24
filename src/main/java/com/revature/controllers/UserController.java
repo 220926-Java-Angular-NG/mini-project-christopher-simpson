@@ -101,4 +101,25 @@ public class UserController {
             System.out.println(nFMException.getMessage());
         }
     };
+
+    public Handler loginUser = context -> {
+
+
+        User user = context.bodyAsClass(User.class);
+
+        user = service.loginUser(user);
+        System.out.println(user.toString());
+        if(user != null){
+
+//            CurrentUser.currentUser = user;
+//            System.out.println(CurrentUser.currentUser.getFirstname());
+
+            context.json(user).status(202).result("User login successful!");
+//            context.result("User has been successfully logged in").status(202);
+        } else {
+            context.result("Sorry, Wrong user name or password").status(404);
+        }
+
+    };
+
 }
